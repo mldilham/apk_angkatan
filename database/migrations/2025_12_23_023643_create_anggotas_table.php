@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('asal');
             $table->string('kesan');
             $table->string('pesan');
-            $table->string('foto');
+            $table->string('foto')->nullable();
             $table->foreignId('angkatan_id')->constrained('angkatans')->onDelete('cascade');
             $table->timestamps();
         });

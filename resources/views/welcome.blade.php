@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+Assalamu’alaikum warahmatullahi wabarakatuh Mengingatkan kembali kepada seluruh santri tingkat SMA/SMK angkatan kelas 3 bahwa dalam waktu dekat insyaAllah akan dilaksanakan Ujian Imtihan Muhadhoroh. Sehubungan dengan hal tersebut, pada Ahad, 4 Januari 2026, seluruh santri diharapkan hadir kembali ke pondok. Kami juga mengingatkan agar seluruh santri berkenan membawa snack atau makanan dari rumah masing-masing, yang nantinya akan diperuntukkan bagi Dewan Juri. Demikian pengumuman ini kami sampaikan. Atas perhatian dan kerja sama antum semua, kami ucapkan jazakumullahu khairan katsiran. Wassalamu’alaikum warahmatullahi wabarakatuh<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">

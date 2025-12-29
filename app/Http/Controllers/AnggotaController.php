@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Anggota;
 use App\Models\Angkatan;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class AnggotaController extends Controller
@@ -14,7 +15,7 @@ class AnggotaController extends Controller
     public function index()
     {
         //
-        $anggotas = Anggota::with('angkatan')->latest()->get();
+        $anggotas = Anggota::with('angkatan')->latest()->paginate(10);
         return view('admin.anggota.index', compact('anggotas'));
 
     }
@@ -36,13 +37,13 @@ class AnggotaController extends Controller
     {
         //
         $request->validate([
-            'nama' => 'required',
-            'sekolah' => 'required',
-            'asal' => 'required',
-            'kesan' => 'required',
-            'pesan' => 'required',
-            'angkatan_id' => 'required',
-            'foto' => 'image|mimes:jpg,jpeg,png|max:2040'
+            'nama' => 'required|string|max:100',
+            'sekolah' => 'required|string|max:150',
+            'asal' => 'required|string|max:150',
+            'kesan' => 'required|string',
+            'pesan' => 'required|string',
+            'angkatan_id' => 'required|exists:angkatans,id',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
         $fotoPath = null;
@@ -69,7 +70,8 @@ class AnggotaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $anggota = Anggota::with('angkatan')->findOrFail($id);
+        return view('admin.anggota.show', compact('anggota'));
     }
 
     /**
@@ -78,7 +80,9 @@ class AnggotaController extends Controller
     public function edit(string $id)
     {
         //
-        // $anggota = Anggota::findOrFail($id);
+        $anggota = Anggota::findOrFail($id);
+        $angkatans = Angkatan::all();
+        return view('admin.anggota.edit', compact('anggota','angkatans'));
     }
 
     /**
@@ -87,6 +91,35 @@ class AnggotaController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $anggota = Anggota::findOrFail($id);
+        $request->validate([
+            'nama'         => 'required|string|max:100',
+            'sekolah'      => 'required|string|max:150',
+            'asal'         => 'required|string|max:150',
+            'kesan'        => 'required|string',
+            'pesan'        => 'required|string',
+            'angkatan_id'  => 'required|exists:angkatans,id',
+            'foto'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if($request->hasFile('foto')){
+            if($anggota->foto){
+                Storage::disk('public')->delete($anggota->foto);
+            }
+            $anggota->foto = $request->file('foto')->store('anggota','public');
+        }
+
+        $anggota->update([
+            'nama' => $request->nama,
+            'sekolah' => $request->sekolah,
+            'asal' => $request->asal,
+            'kesan' => $request->kesan,
+            'pesan' => $request->pesan,
+            'angkatan_id' => $request->angkatan_id,
+            'foto' => $anggota->foto,
+        ]);
+
+        return redirect()->route('anggota.index')->with('success','Data berhasil di update');
     }
 
     /**
@@ -94,6 +127,11 @@ class AnggotaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $anggota = Anggota::findOrFail($id);
+        if ($anggota->foto) {
+            Storage::disk('public')->delete($anggota->foto);
+        }
+        $anggota->delete();
+        return redirect()->route('anggota.index')->with('success', 'Anggota berhasil dihapus');
     }
 }
